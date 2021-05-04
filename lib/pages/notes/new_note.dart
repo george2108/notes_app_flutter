@@ -41,7 +41,7 @@ class _NewNoteState extends State<NewNote> {
               addNote(note);
               Navigator.pushNamedAndRemoveUntil(
                 context,
-                'home',
+                'notes',
                 (route) => false,
               );
             },

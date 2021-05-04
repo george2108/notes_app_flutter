@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-
 import 'package:notes_app/db/database_provider.dart';
-import 'package:notes_app/models/note_model.dart';
 
-class HomePage extends StatelessWidget {
+import 'package:notes_app/models/note_model.dart';
+import 'package:notes_app/widgets/menu_drawer.dart';
+
+class NotesPage extends StatelessWidget {
   getNotes() async {
-    final notes = await DatabaseProvider.db.getNotes();
+    final notes = await DatabaseProvider.db.getAllNotes();
     return notes;
   }
 
@@ -15,6 +16,7 @@ class HomePage extends StatelessWidget {
       appBar: AppBar(
         title: Text('Mis notas'),
       ),
+      drawer: Menu(),
       body: FutureBuilder(
         future: getNotes(),
         builder: (context, notesData) {
@@ -35,23 +37,15 @@ class HomePage extends StatelessWidget {
                     String title = notesData.data[index]['title'];
                     String body = notesData.data[index]['body'];
                     String createdAt = notesData.data[index]['createdAt'];
-                    return Card(
-                      child: ListTile(
-                        title: Text(title),
-                        subtitle: Text(body),
-                        onTap: () {
-                          Navigator.pushNamed(
-                            context,
-                            'showNote',
-                            arguments: NoteModel(
-                              title: title,
-                              body: body,
-                              id: id,
-                              createdAt: DateTime.parse(createdAt),
-                            ),
-                          );
-                        },
-                      ),
+                    String newBody;
+                    if (body.length > 59)
+                      newBody = body.substring(1, 60) + '...';
+                    return Nota(
+                      title: title,
+                      body: body,
+                      newBody: newBody,
+                      id: id,
+                      createdAt: createdAt,
                     );
                   },
                 ),
@@ -64,6 +58,46 @@ class HomePage extends StatelessWidget {
         child: Icon(Icons.note_add),
         onPressed: () {
           Navigator.pushNamed(context, 'newNote');
+        },
+      ),
+    );
+  }
+}
+
+// muestra las notas en el listado
+class Nota extends StatelessWidget {
+  const Nota({
+    Key key,
+    @required this.title,
+    @required this.body,
+    @required this.newBody,
+    @required this.id,
+    @required this.createdAt,
+  }) : super(key: key);
+
+  final String title;
+  final String body;
+  final String newBody;
+  final int id;
+  final String createdAt;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: ListTile(
+        title: Text(title),
+        subtitle: Text(body.length > 59 ? newBody : body),
+        onTap: () {
+          Navigator.pushNamed(
+            context,
+            'showNote',
+            arguments: NoteModel(
+              title: title,
+              body: body,
+              id: id,
+              createdAt: DateTime.parse(createdAt),
+            ),
+          );
         },
       ),
     );
