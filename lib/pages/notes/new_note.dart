@@ -8,9 +8,9 @@ class NewNote extends StatefulWidget {
 }
 
 class _NewNoteState extends State<NewNote> {
-  String title;
-  String body;
-  DateTime createdAt;
+  String title = '';
+  String body = '';
+  DateTime createdAt = DateTime.now();
 
   TextEditingController titleController = TextEditingController();
   TextEditingController bodyController = TextEditingController();

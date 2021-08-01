@@ -5,7 +5,7 @@ import 'package:notes_app/models/note_model.dart';
 import 'package:notes_app/widgets/menu_drawer.dart';
 
 class NotesPage extends StatelessWidget {
-  getNotes() async {
+  Future<List> getNotes() async {
     final notes = await DatabaseProvider.db.getAllNotes();
     return notes;
   }
@@ -19,11 +19,11 @@ class NotesPage extends StatelessWidget {
       drawer: Menu(),
       body: FutureBuilder(
         future: getNotes(),
-        builder: (context, notesData) {
+        builder: (context, AsyncSnapshot<List> notesData) {
           if (notesData.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
           } else {
-            if (notesData.data == Null) {
+            if (notesData.data!.length < 1) {
               return Center(
                 child: Text('No tienes notas aun, crea una'),
               );
@@ -31,19 +31,15 @@ class NotesPage extends StatelessWidget {
               return Padding(
                 padding: EdgeInsets.all(8.0),
                 child: ListView.builder(
-                  itemCount: notesData.data.length,
+                  itemCount: notesData.data!.length,
                   itemBuilder: (context, index) {
-                    int id = notesData.data[index]['id'];
-                    String title = notesData.data[index]['title'];
-                    String body = notesData.data[index]['body'];
-                    String createdAt = notesData.data[index]['createdAt'];
-                    String newBody;
-                    if (body.length > 59)
-                      newBody = body.substring(1, 60) + '...';
+                    int id = notesData.data![index]['id'];
+                    String title = notesData.data![index]['title'];
+                    String body = notesData.data![index]['body'];
+                    String createdAt = notesData.data![index]['createdAt'];
                     return Nota(
                       title: title,
                       body: body,
-                      newBody: newBody,
                       id: id,
                       createdAt: createdAt,
                     );
@@ -67,17 +63,14 @@ class NotesPage extends StatelessWidget {
 // muestra las notas en el listado
 class Nota extends StatelessWidget {
   const Nota({
-    Key key,
-    @required this.title,
-    @required this.body,
-    @required this.newBody,
-    @required this.id,
-    @required this.createdAt,
-  }) : super(key: key);
+    required this.title,
+    required this.body,
+    required this.id,
+    required this.createdAt,
+  });
 
   final String title;
   final String body;
-  final String newBody;
   final int id;
   final String createdAt;
 
@@ -86,7 +79,7 @@ class Nota extends StatelessWidget {
     return Card(
       child: ListTile(
         title: Text(title),
-        subtitle: Text(body.length > 59 ? newBody : body),
+        subtitle: Text(createdAt),
         onTap: () {
           Navigator.pushNamed(
             context,

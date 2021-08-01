@@ -9,11 +9,11 @@ class NewPassword extends StatefulWidget {
 }
 
 class _NewPasswordState extends State<NewPassword> {
-  String title;
-  String user;
-  String password;
-  String description;
-  DateTime createdAt;
+  String title = '';
+  String user = '';
+  String password = '';
+  String description = '';
+  DateTime createdAt = DateTime.now();
 
   TextEditingController titleController = TextEditingController();
   TextEditingController userController = TextEditingController();

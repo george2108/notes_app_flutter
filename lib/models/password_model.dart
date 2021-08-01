@@ -1,16 +1,16 @@
 class PasswordModel {
-  int id;
+  int? id;
   String title;
-  String user;
+  String? user;
   String password;
-  String description;
-  DateTime createdAt;
+  String? description;
+  DateTime? createdAt;
 
   PasswordModel({
     this.id,
-    this.title,
+    required this.title,
     this.user,
-    this.password,
+    required this.password,
     this.description,
     this.createdAt,
   });

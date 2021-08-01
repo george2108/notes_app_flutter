@@ -6,7 +6,7 @@ import 'package:sqflite/sqflite.dart';
 class DatabaseProvider {
   DatabaseProvider._();
   static final DatabaseProvider db = DatabaseProvider._();
-  static Database _database;
+  late Database _database;
 
   List<String> consultas = [
     '''
@@ -56,12 +56,12 @@ class DatabaseProvider {
     );
   }
 
-  Future<dynamic> getAllNotes() async {
+  Future<List> getAllNotes() async {
     final db = await database;
     final res = await db.query("notes", orderBy: "createdAt DESC");
-    if (res.length == 0) return Null;
+    if (res.length == 0) return [];
     final resultMap = res.toList();
-    return resultMap.isNotEmpty ? resultMap : Null;
+    return resultMap.isNotEmpty ? resultMap : [];
   }
 
   Future<int> deleteNote(int id) async {
@@ -74,12 +74,12 @@ class DatabaseProvider {
   }
 
   /// passwords
-  Future<dynamic> getAllPasswords() async {
+  Future<List> getAllPasswords() async {
     final db = await database;
     final res = await db.query("passwords", orderBy: "createdAt DESC");
-    if (res.length == 0) return Null;
+    if (res.length == 0) return [];
     final resultMap = res.toList();
-    return resultMap.isNotEmpty ? resultMap : Null;
+    return resultMap.isNotEmpty ? resultMap : [];
   }
 
   addNewPassword(PasswordModel pass) async {

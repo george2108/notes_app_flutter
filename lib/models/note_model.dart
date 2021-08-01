@@ -1,10 +1,14 @@
 class NoteModel {
-  int id;
+  int? id;
   String title;
   String body;
   DateTime createdAt;
 
-  NoteModel({this.id, this.title, this.body, this.createdAt});
+  NoteModel(
+      {this.id,
+      required this.title,
+      required this.body,
+      required this.createdAt});
 
   Map<String, dynamic> toMap() {
     return ({

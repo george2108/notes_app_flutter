@@ -4,7 +4,7 @@ import 'package:notes_app/models/password_model.dart';
 import 'package:notes_app/widgets/menu_drawer.dart';
 
 class PasswordsPage extends StatelessWidget {
-  getPasswords() async {
+  Future<List> getPasswords() async {
     final passwords = await DatabaseProvider.db.getAllPasswords();
     return passwords;
   }
@@ -18,51 +18,50 @@ class PasswordsPage extends StatelessWidget {
       drawer: Menu(),
       body: FutureBuilder(
         future: getPasswords(),
-        builder: (context, passwordsData) {
+        builder: (context, AsyncSnapshot<List> passwordsData) {
           if (passwordsData.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
+          }
+          if (passwordsData.data!.length < 1) {
+            return Center(
+              child: Text('No tienes contraseñas aun, crea una'),
+            );
           } else {
-            if (passwordsData.data == Null) {
-              return Center(
-                child: Text('No tienes contraseñas aun, crea una'),
-              );
-            } else {
-              return Padding(
-                padding: EdgeInsets.all(8.0),
-                child: ListView.builder(
-                  itemCount: passwordsData.data.length,
-                  itemBuilder: (context, index) {
-                    int id = passwordsData.data[index]['id'];
-                    String title = passwordsData.data[index]['title'];
-                    String user = passwordsData.data[index]['user'];
-                    String password = passwordsData.data[index]['password'];
-                    String description =
-                        passwordsData.data[index]['description'];
-                    String createdAt = passwordsData.data[index]['createdAt'];
-                    return Card(
-                      child: ListTile(
-                        title: Text(title),
-                        subtitle: Text(description),
-                        onTap: () {
-                          Navigator.pushNamed(
-                            context,
-                            'showPassword',
-                            arguments: PasswordModel(
-                              id: id,
-                              title: title,
-                              user: user,
-                              password: password,
-                              description: description,
-                              createdAt: DateTime.parse(createdAt),
-                            ),
-                          );
-                        },
-                      ),
-                    );
-                  },
-                ),
-              );
-            }
+            return Padding(
+              padding: EdgeInsets.all(8.0),
+              child: ListView.builder(
+                itemCount: passwordsData.data!.length,
+                itemBuilder: (context, index) {
+                  int id = passwordsData.data![index]['id'];
+                  String title = passwordsData.data![index]['title'];
+                  String user = passwordsData.data![index]['user'];
+                  String password = passwordsData.data![index]['password'];
+                  String description =
+                      passwordsData.data![index]['description'];
+                  String createdAt = passwordsData.data![index]['createdAt'];
+                  return Card(
+                    child: ListTile(
+                      title: Text(title),
+                      subtitle: Text(description),
+                      onTap: () {
+                        Navigator.pushNamed(
+                          context,
+                          'showPassword',
+                          arguments: PasswordModel(
+                            id: id,
+                            title: title,
+                            user: user,
+                            password: password,
+                            description: description,
+                            createdAt: DateTime.parse(createdAt),
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                },
+              ),
+            );
           }
         },
       ),
